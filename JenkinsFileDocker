@@ -18,7 +18,7 @@ pipeline
         {
             steps()
             {
-                git branch: 'master', url: 'https://github.com/MithunTechnologiesDevOps/maven-web-application.git'
+                git branch: 'feature', url: 'https://github.com/apno1aj/Maven-Web-Application.git'
             }
         }
 
@@ -34,7 +34,7 @@ pipeline
         {
             steps()
             {
-                sh 'docker build -t mithuntechnologies/maven-web-application:${buildNumber} .'
+                sh 'docker build -t apno1aj/maven-web-application:${buildNumber} .'
             }
         }
 
@@ -44,9 +44,9 @@ pipeline
             {
                 withCredentials([string(credentialsId: 'Docker_Hub_Password', variable: 'Docker_Hub_Password')])
                 {
-                    sh 'docker login -u mithuntechnologies -p ${Docker_Hub_Password}'
+                    sh 'docker login -u apno1aj -p ${Docker_Hub_Password}'
                 }
-                sh 'docker push mithuntechnologies/maven-web-application:${buildNumber}'
+                sh 'docker push apno1aj/maven-web-application:${buildNumber}'
             }
         }
 
@@ -54,7 +54,7 @@ pipeline
         {
             steps()
             {
-                sh 'docker rmi -f mithuntechnologies/maven-web-application:${buildNumber}'
+                sh 'docker rmi -f apno1aj/maven-web-application:${buildNumber}'
             }
         }
 
@@ -64,8 +64,8 @@ pipeline
             {
                 sshagent(['DeploymentServer_SSH'])
                 {
-                    sh "ssh -o StrictHostKeyChecking=no ubuntu@3.108.196.56 docker rm -f mavenwebapplication || true"
-                    sh "ssh -o StrictHostKeyChecking=no ubuntu@3.108.196.56 docker run -d --name mavenwebapplication -p 8080:8080 mithuntechnologies/maven-web-application:$Build_Number"
+                    sh "ssh -o StrictHostKeyChecking=no ubuntu@100.52.207.113 docker rm -f mavenwebapplication || true"
+                    sh "ssh -o StrictHostKeyChecking=no ubuntu@100.52.207.113 docker run -d --name mavenwebapplication -p 8080:8080 apno1aj/maven-web-application:$Build_Number"
                 }
             }
         }
