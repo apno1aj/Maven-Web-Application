@@ -62,7 +62,7 @@ pipeline
         {
             steps()
             {
-                sshagent(['DeploymentServer_SSH'])
+                sshagent(['Deploymentserver_SSH'])
                 {
                     sh "ssh -o StrictHostKeyChecking=no ubuntu@100.52.207.113 docker rm -f mavenwebapplication || true"
                     sh "ssh -o StrictHostKeyChecking=no ubuntu@100.52.207.113 docker run -d --name mavenwebapplication -p 8080:8080 apno1aj/maven-web-application:$Build_Number"
