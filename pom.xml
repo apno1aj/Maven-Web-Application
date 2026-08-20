@@ -26,6 +26,7 @@
 		<sonar.password>sqa_14a346e778787ca6e324bef235471ae23810bfe4</sonar.password> 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<sonar.login>${env.SONAR_TOKEN}</sonar.login>
 
 	</properties>
 
