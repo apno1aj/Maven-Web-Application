@@ -35,6 +35,7 @@ pipeline
               withSonarQubeEnv('SonarQubeServer') {
 				withCredentials([string(credentialsId: 'jenkins_ci_token', variable: 'jenkins_ci_token')]) {
             	sh 'mvn sonar:sonar -Dsonar.token=$jenkins_ci_token''
+															   }	
         					  }
     		  }
 				    }
