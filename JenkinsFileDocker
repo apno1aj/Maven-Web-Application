@@ -40,44 +40,35 @@ stage('SonarQube Analysis') {
     }
 }
 
-        stage('Build Docker Image')
-        {
-            steps()
-            {
+stage('Build Docker Image') {
+            steps {
                 sh "docker build -t apno1aj/maven-web-application:${env.BUILD_NUMBER} ."
             }
         }
 
-        stage("Authenticate and Push Docker Image to DockerHub")
-        {
-            steps()
-            {
-                withCredentials([string(credentialsId: 'Docker_PAT', variable: 'DOCKERHUB_PASSWORD')])
-                {
+stage("Authenticate and Push Docker Image to DockerHub") {
+            steps {
+                withCredentials([string(credentialsId: 'Docker_PAT', variable: 'DOCKERHUB_PASSWORD')]) {
                     sh 'echo $DOCKERHUB_PASSWORD | docker login -u apno1aj --password-stdin'
                     sh "docker push apno1aj/maven-web-application:${env.BUILD_NUMBER}"
                 }
             }
         }
 
-        stage('Remove Docker Image from Jenkins Locally')
-        {
-            steps()
-            {
+stage('Remove Docker Image from Jenkins Locally') {
+            steps {
                 sh "docker rmi -f apno1aj/maven-web-application:${env.BUILD_NUMBER}"
             }
         }
 
-        stage('Deploy Application to Deployment Server')
-        {
-            steps()
-            {
-                sshagent([Deploymentserver_SSH])
-                {
-                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@172.31.38.68 docker rm -f maven-web-application || true'
+stage('Deploy Application to Deployment Server') {
+            steps {
+                sshagent(['Deploymentserver_SSH']) {
+                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@172.31.38.68 "docker rm -f maven-web-application || true"'
                     sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.38.68 'docker run -d --name maven-web-application -p 8080:8080 apno1aj/maven-web-application:${env.BUILD_NUMBER}'"
                 }
             }
+        }
         }
     }
 }
