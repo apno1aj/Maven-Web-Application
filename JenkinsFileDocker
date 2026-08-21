@@ -36,7 +36,7 @@ pipeline
             {
                withSonarQubeEnv('SonarQubeServer')
                 {
-                    sh 'mvn clean compile sonar:sonar'
+                    sh 'mvn clean compile sonar:sonar -Dsonar.token=${SONAR_AUTH_TOKEN}'
                 }
             }
         }
