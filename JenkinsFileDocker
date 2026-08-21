@@ -33,7 +33,9 @@ pipeline
 stage('SonarQube Analysis') {
     steps {
         withSonarQubeEnv('SonarQubeServer') {
-            sh "mvn clean compile sonar:sonar -Dsonar.token=${SONAR_AUTH_TOKEN} -Dsonar.host.url=${SONAR_HOST_URL}"
+            withCredentials([string(credentialsId: 'sonar_token', variable: 'SONAR_TOKEN')]) {
+                sh 'mvn clean compile sonar:sonar -Dsonar.token=$SONAR_TOKEN'
+            }
         }
     }
 }
