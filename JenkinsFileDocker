@@ -34,7 +34,7 @@ stage('SonarQube Analysis') {
     steps {
         withSonarQubeEnv('SonarQubeServer') {
             withCredentials([string(credentialsId: 'sonar_token', variable: 'SONAR_TOKEN')]) {
-                sh 'mvn clean compile sonar:sonar -Dsonar.token=$SONAR_TOKEN'
+                sh 'mvn compile sonar:sonar -Dsonar.token=$SONAR_TOKEN'
             }
         }
     }
