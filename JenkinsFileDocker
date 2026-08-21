@@ -44,7 +44,7 @@ stage('SonarQube Analysis') {
         {
             steps()
             {
-                sh 'docker build -t apno1aj/maven-web-application:${buildNumber} .'
+                sh "docker build -t apno1aj/maven-web-application:${env.BUILD_NUMBER} ."
             }
         }
 
@@ -55,7 +55,7 @@ stage('SonarQube Analysis') {
                 withCredentials([string(credentialsId: 'Docker_PAT', variable: 'DOCKERHUB_PASSWORD')])
                 {
                     sh 'echo $DOCKERHUB_PASSWORD | docker login -u apno1aj --password-stdin'
-                    sh 'docker push apno1aj/maven-web-application:${buildNumber}'
+                    sh "docker push apno1aj/maven-web-application:${env.BUILD_NUMBER}"
                 }
             }
         }
@@ -64,7 +64,7 @@ stage('SonarQube Analysis') {
         {
             steps()
             {
-                sh 'docker rmi -f apno1aj/maven-web-application:${buildNumber}'
+                sh "docker rmi -f apno1aj/maven-web-application:${env.BUILD_NUMBER}"
             }
         }
 
@@ -75,7 +75,7 @@ stage('SonarQube Analysis') {
                 sshagent([Deploymentserver_SSH])
                 {
                     sh 'ssh -o StrictHostKeyChecking=no ubuntu@172.31.38.68 docker rm -f maven-web-application || true'
-                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@172.31.38.68 docker run -d --name maven-web-application -p 8080:8080 apno1aj/maven-web-application:${buildNumber}'
+                    sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.38.68 'docker run -d --name maven-web-application -p 8080:8080 apno1aj/maven-web-application:${env.BUILD_NUMBER}'"
                 }
             }
         }
