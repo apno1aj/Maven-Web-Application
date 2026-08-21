@@ -4,7 +4,7 @@ pipeline
 
     tools
     {
-        maven 'maven-3.9.14'
+        maven 'Maven_3.9.14'
     }
 
     environment
@@ -14,7 +14,7 @@ pipeline
 
     stages
     {
-        stage('Checkout code to Jenkins from GitHub')
+        stage('Checkout Code to Jenkins from GitHub')
         {
             steps()
             {
@@ -30,18 +30,17 @@ pipeline
             }
         }
 
-        stage('SonarQube Analysis')
-        {
-            steps()
-            {
-               withSonarQubeEnv('SonarQubeServer')
-                {
-                    sh 'mvn clean compile sonar:sonar'
-                }
+	stage('SonarQube Analysis') {
+    	    steps {
+               withSonarQubeEnv('SonarQubeServer') {
+                   withCredentials([string(credentialsId: 'jenkins_ci_token', variable: 'jenkins_ci_token')]) {
+                       sh 'mvn clean verify sonar:sonar -Dsonar.token=$jenkins_ci_token'
             }
         }
+    }
+}
 
-        stage('Build Docker Image')
+        stage("Build Docker Image")
         {
             steps()
             {
@@ -49,15 +48,15 @@ pipeline
             }
         }
 
-        stage("Authenticate and Push Docker Image to DockerHub")
+        stage("Authenticate and Push Docker Image to Docker Hub")
         {
             steps()
             {
-                withCredentials([string(credentialsId: 'Docker_PAT', variable: 'DOCKERHUB_PASSWORD')])
+                withCredentials([string(credentialsId: 'Docker_Hub_Password', variable: 'Docker_Hub_Password')])
                 {
-                    sh 'echo $DOCKERHUB_PASSWORD | docker login -u apno1aj --password-stdin'
-                    sh 'docker push apno1aj/maven-web-application:${buildNumber}'
+                    sh 'docker login -u apno1aj -p ${Docker_Hub_Password}'
                 }
+                sh 'docker push apno1aj/maven-web-application:${buildNumber}'
             }
         }
 
@@ -73,10 +72,10 @@ pipeline
         {
             steps()
             {
-                sshagent([Deploymentserver_SSH])
+                sshagent(['Deploymentserver_SSH'])
                 {
-                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@172.31.38.68 docker rm -f maven-web-application || true'
-                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@172.31.38.68 docker run -d --name maven-web-application -p 8080:8080 apno1aj/maven-web-application:${buildNumber}'
+                    sh "ssh -o StrictHostKeyChecking=no ubuntu@100.52.207.113 docker rm -f mavenwebapplication || true"
+                    sh "ssh -o StrictHostKeyChecking=no ubuntu@100.52.207.113 docker run -d --name mavenwebapplication -p 8080:8080 apno1aj/maven-web-application:$Build_Number"
                 }
             }
         }
