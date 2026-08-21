@@ -69,6 +69,5 @@ stage('Deploy Application to Deployment Server') {
                 }
             }
         }
-        }
     }
 }
